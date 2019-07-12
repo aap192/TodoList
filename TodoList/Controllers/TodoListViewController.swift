@@ -10,7 +10,7 @@ import UIKit
 
 class TodoListViewController: UITableViewController {
     
-    var itemArray = ["Apples", "Milk", "Eggs"]
+    var itemArray = [Item]()
     
     // Step: 4
     
@@ -19,8 +19,28 @@ class TodoListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //Step 6
+        
+        let item1 = Item()
+        item1.title = "Mark"
+        itemArray.append(item1)
+        
+        let item2 = Item()
+        item2.title = "David"
+        itemArray.append(item2)
+        
+        let item3 = Item()
+        item3.title = "John"
+        itemArray.append(item3)
+        
+        let item4 = Item()
+        item4.title = "Josh"
+        itemArray.append(item4)
+        
+        
+        
         //Step 5: persist local data storage using NSUserDefaults
-        if let items = defaults.array(forKey: "TodoListArray") as? [String] {
+        if let items = defaults.array(forKey: "TodoListArray") as? [Item] {
             itemArray = items
         }
         // Do any additional setup after loading the view.
@@ -35,7 +55,22 @@ class TodoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TodoItemCell", for: indexPath)
-        cell.textLabel?.text = itemArray[indexPath.row]
+        
+        let item = itemArray[indexPath.row]
+        cell.textLabel?.text = item.title
+        
+        // Ternary operator Step: 6
+        // value = condition ? valueIfTrue : valueIFfalse
+        
+        cell.accessoryType = item.done ? .checkmark : .none
+        
+//        if item.done == true {
+//            cell.accessoryType = .checkmark
+//        }
+//        else {
+//            cell.accessoryType = .none
+//        }
+        
         return cell
     }
     /*
@@ -51,14 +86,25 @@ class TodoListViewController: UITableViewController {
     // Mark Table view delegate methods Step :2
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(itemArray[indexPath.row])
+       // print(itemArray[indexPath.row])
         
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        }
-        else {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+        
+//        if itemArray[indexPath.row].done == false{
+//            itemArray[indexPath.row].done = true
+//        }
+//        else {
+//            itemArray[indexPath.row].done = false
+//        }
+        
+        tableView.reloadData()
+        
+//        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
+//            tableView.cellForRow(at: indexPath)?.accessoryType = .none
+//        }
+//        else {
+//            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+//        }
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
@@ -72,7 +118,9 @@ class TodoListViewController: UITableViewController {
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             // what will happen once the userclicks add item button on our alert
             
-            self.itemArray.append(textField.text!)
+            let newItem = Item()
+            newItem.title = textField.text!
+            self.itemArray.append(newItem)
             
             self.defaults.set(self.itemArray, forKey: "TodoListArray")
             
